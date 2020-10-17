@@ -1,0 +1,31 @@
+#+TITLE: The Christmas Compiler
+
+#+begin_verse
+Oh syntax tree, oh syntax tree,
+How lovely are thy derivations!
+#+end_verse
+
+Christmas break is coming up soon, and I all I want for Christmas is a compiler that:
+
+ - Implements a small typed lambda calculus
+ - Includes Hindley-Milner type inference
+ - Replaces a garbage collector runtime with linear typing
+ - Supports continuations
+ - Is built with a nanopass framework so I can swap layers out to my liking
+
+I know Santa's busy this year, so I don't know if he'll get around to all those things, but we're going to try. This will be a victory if I learn something.
+
+It will also be a good outlet for some Christmas-related puns.
+
+I am so sorry.
+
+#+begin_verse
+Write yourself, some merry little IR,
+If the types will check
+From now on, this variable is out of scope
+And build yourself, a merry little compiler now
+#+end_verse
+
+* Author
+
+Ashton Wiersdorf <ashton.wiersdorf@pobox.com>
