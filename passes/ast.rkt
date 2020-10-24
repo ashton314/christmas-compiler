@@ -23,6 +23,10 @@
 ;; Literal values like 42, 2.345, etc.
 (def-ast-node litteral (value))
 
+;; Quoted values
+(def-ast-node quoted-atom (name))
+(def-ast-node quoted-list (lst))
+
 ;; Primitively-defined operations; math operators fall under this category
 (def-ast-node primitive-op (name arity arguments))
 
@@ -47,3 +51,6 @@
 
 ;; General application node; we'll refine through the passes
 (def-ast-node application (func-ref args))
+
+;; Conditional node
+(def-ast-node if (condition true-case false-case))

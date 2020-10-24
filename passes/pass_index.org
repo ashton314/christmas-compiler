@@ -1,0 +1,9 @@
+#+TITLE: Pass Index
+
+This compiler consists of several small passes. Since there are so many, this is an index of those passes so you can figure out easily which pass runs when.
+
+* Passes
+
+ - [[file:parser.rkt][Parser]] :: The first pass is the parser: this turns an external, Racket-hosted s-expression into our internal AST
+
+This list will grow as time goes on.
