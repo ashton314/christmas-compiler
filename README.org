@@ -1,9 +1,9 @@
 #+TITLE: The Christmas Compiler
 
-#+begin_verse
+#+begin_quote
 Oh syntax tree, oh syntax tree,
 How lovely are thy derivations!
-#+end_verse
+#+end_quote
 
 Christmas break is coming up soon, and I all I want for Christmas is a compiler that:
 
@@ -19,12 +19,12 @@ It will also be a good outlet for some Christmas-related puns.
 
 I am so sorry.
 
-#+begin_verse
+#+begin_quote
 Write yourself, some merry little IR,
 If the types will check
 From now on, this variable is out of scope
 And build yourself, a merry little compiler now
-#+end_verse
+#+end_quote
 
 * Author
 
