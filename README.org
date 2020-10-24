@@ -46,6 +46,8 @@ make test-racket
 
 The compiler works in a series of small passes over the code/abstract syntax tree (AST), each of which performs small modifications to the AST or provides some insight into what the AST is doing. The first pass parses the raw source langauge into an AST. The defintions of the AST nodes can be found in [[file:passes/ast.rkt][passes/ast.rkt]]. Once all the passes have finished, the final pass converts the AST into LLVM IR. The LLVM then turns this into machine code.
 
+Inspiration for the "nanopass" architecture came from /Educational Pearl: A Nanopass Framework for Compiler Education/ [fn:1], with some inspiration from a more minimal guide /An Incremental Approach to Compiler Construction/ [fn:2].
+
 ** Rationale
 
 I decided to use the LLVM because it handles the hard work of machine-specific assembly/machine code generation, and I wanted a compiler that would work both on my desktop (which uses an Intel processor) and my Raspberry Pi (which is an ARM architecture).
@@ -63,3 +65,9 @@ The compiler implements a simple lambda calculus. At time of writing, this langu
 * Author
 
 Ashton Wiersdorf <ashton.wiersdorf@pobox.com>
+
+* Footnotes
+
+[fn:1] D. Sarkar, O. Waddell, and R. K. Dybvig, “Educational Pearl: A Nanopass Framework for Compiler Education,” J. Funct. Prog., vol. 15, no. 05, p. 653, Jun. 2005, doi: 10.1017/S0956796805005605. http://www.pup.si/files/pdf_file/nano-jfp.pdf
+
+[fn:2] A. Ghuloum, “An Incremental Approach to Compiler Construction,” p. 11, 2006. http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.88.170&rep=rep1&type=pdf
