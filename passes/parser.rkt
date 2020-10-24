@@ -5,7 +5,7 @@
 
 (require "ast.rkt")
 
-(provide (parse))
+(provide parse)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; This is the parser for the language. This is the first pass to run ;;

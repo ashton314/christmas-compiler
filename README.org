@@ -1,7 +1,7 @@
 #+TITLE: The Christmas Compiler
 
 #+begin_quote
-Oh syntax tree, oh syntax tree,
+Oh syntax tree, oh syntax tree,  
 How lovely are thy derivations!
 #+end_quote
 
@@ -20,11 +20,45 @@ It will also be a good outlet for some Christmas-related puns.
 I am so sorry.
 
 #+begin_quote
-Write yourself, some merry little IR,
-If the types will check
-From now on, this variable is out of scope
+Write yourself, some merry little IR,  
+If the types will check  
+From now on, this variable is out of scope  
 And build yourself, a merry little compiler now
 #+end_quote
+
+* Synopsis
+
+Requires [[https://racket-lang.org/][The Racket Programming Language]], which is available for free for all major (and plenty of obscure!) platforms.
+
+Also requires the LLVM. (At time of writing, this doesn't do any code generation, so you don't need this /right now/, but it will soon be a requirement.)
+
+** TODO Add link to documentation on how to get the LLVM toolkit
+
+** Tests
+
+Run Racket tests:
+
+#+begin_example
+make test-racket
+#+end_example
+
+* Description
+
+The compiler works in a series of small passes over the code/abstract syntax tree (AST), each of which performs small modifications to the AST or provides some insight into what the AST is doing. The first pass parses the raw source langauge into an AST. The defintions of the AST nodes can be found in [[file:passes/ast.rkt][passes/ast.rkt]]. Once all the passes have finished, the final pass converts the AST into LLVM IR. The LLVM then turns this into machine code.
+
+** Rationale
+
+I decided to use the LLVM because it handles the hard work of machine-specific assembly/machine code generation, and I wanted a compiler that would work both on my desktop (which uses an Intel processor) and my Raspberry Pi (which is an ARM architecture).
+
+* Language
+
+** Description
+
+The compiler implements a simple lambda calculus. At time of writing, this language is untyped, but static typing with type inference will come at a later step.
+
+*** TODO Fill out this section
+
+** TODO Examples
 
 * Author
 
