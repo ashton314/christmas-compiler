@@ -17,6 +17,12 @@
 ;; the structs defined in ast.rkt
 (define (parse program)
   (match program
+    ;; Lambda: body may be composed of several expessions; results of
+    ;; the last will be returned
+    [`(,(? lambda? _) (,params ...) ,body ...)
+     ;; TODO: add a pass to extract free variables
+     (lambda-dec params '() (map parse body))]
+
     ;; Primitive operations
     [`(,(? prim-arity-0? op))
      (primitive-op op 0 'void)]
@@ -46,6 +52,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 [module+ test
+  ;; Lambda arguments
+  (check-equal? (parse '(lambda (x y z) (@+ y z) (@* x y)))
+                (lambda-dec '(x y z) '()
+                            (list
+                             (primitive-op '@+ 2 (list (var-name 'y) (var-name 'z)))
+                             (primitive-op '@* 2 (list (var-name 'x) (var-name 'y))))))
+
   ;; Primitive operations
   (check-equal? (parse '(@+ 1 (@add1 2)))
                 (primitive-op '@+ 2 (list (litteral 1) (primitive-op '@add1 1 (litteral 2)))))
@@ -75,3 +88,10 @@
   (and
    (symbol? sym)
    (member sym '(@+ @* @/ @- @cons @=))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Various other helper functions ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (lambda? sym)
+  (and (member sym '(lambda λ)) (symbol? sym)))

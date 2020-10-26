@@ -37,15 +37,15 @@
 (def-ast-node type-annotation (expr))
 
 ;; Labels definition
-(def-ast-node labels (definitions body))
+(def-ast-node labels-dec (definitions body))
 
 (def-ast-node label-definition (name arguments free-vars body))
 
 ;; Lambda (used in the initial passes; eventually this should get hoisted)
-(def-ast-node lambda (arguments free-vars body))
+(def-ast-node lambda-dec (arguments free-vars body))
 
 ;; Let; we might compile these into lambdas later
-(def-ast-node let (definitions body))
+(def-ast-node let-dec (definitions body))
 
 (def-ast-node let-definition (var-name expr))
 
@@ -53,4 +53,4 @@
 (def-ast-node application (func-ref args))
 
 ;; Conditional node
-(def-ast-node if (condition true-case false-case))
+(def-ast-node if-dec (condition true-case false-case))
