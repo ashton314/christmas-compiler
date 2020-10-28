@@ -17,6 +17,16 @@
 ;; the structs defined in ast.rkt
 (define (parse program)
   (match program
+    ;; let-blocks
+    [`(let ([,(? symbol? var) ,val-expr] ...)
+        ,body ...)
+     (let-dec (map (lambda (var val) (let-definition var (parse val))) var val-expr)
+              (map parse body))]
+
+    ;; branches
+    [`(if ,condition ,t-arm ,f-arm)
+     (if-dec (parse condition) (parse t-arm) (parse f-arm))]
+
     ;; Lambda: body may be composed of several expessions; results of
     ;; the last will be returned
     [`(,(? lambda? _) (,params ...) ,body ...)
@@ -45,13 +55,40 @@
     [(? inexact-real? num) (litteral num)]
     [(? string? num) (litteral num)]
 
-    ))
+    ;; function application
+    [`(,f-expr . ,args)
+     ;; TODO: I might want to optimize inlined lambda applications
+     (application (parse f-expr) (map parse args))]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;                               Tests                                ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 [module+ test
+  ;; Let blocks
+  (check-equal?
+   (parse '(let ((x (@+ 1 2))
+                 (y (@* x 2)))
+             (@- x y)))
+   (let-dec (list (let-definition 'x (primitive-op '@+ 2 (list (litteral 1) (litteral 2))))
+                  (let-definition 'y (primitive-op '@* 2 (list (var-name 'x) (litteral 2))))
+                  )
+            (list (primitive-op '@- 2 (list (var-name 'x) (var-name 'y))))))
+
+  ;; Conditionals
+  (check-equal?
+   (parse '(if (@zero? x) (quote foo) (quote bar)))
+   (if-dec (primitive-op '@zero? 1 (var-name 'x)) (quoted-atom 'foo) (quoted-atom 'bar)))
+
+  ;; Funciton calls
+  (check-equal?
+   (parse '(foo 1 2))
+   (application (var-name 'foo) (list (litteral 1) (litteral 2))))
+  (check-equal?
+   (parse '((lambda (x) (@+ x 1)) 42))
+   (application (lambda-dec '(x) '() (list (primitive-op '@+ 2 (list (var-name 'x) (litteral 1)))))
+                (list (litteral 42))))
+
   ;; Lambda arguments
   (check-equal? (parse '(lambda (x y z) (@+ y z) (@* x y)))
                 (lambda-dec '(x y z) '()
