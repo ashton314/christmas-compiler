@@ -17,6 +17,17 @@
 ;; the structs defined in ast.rkt
 (define (parse program)
   (match program
+    ;; labels
+    [`(labels ([,(? symbol? lvar)
+                (code (,(? symbol? params) ...) (,(? symbol? free-vars) ...) ,f-body ...)] ...)
+              ,body ...)
+     (labels-dec
+      (map
+       (lambda (lvar params free-vars body)
+         (label-definition lvar params free-vars (map parse body)))
+       lvar params free-vars f-body)
+      (map parse body))]
+
     ;; let-blocks
     [`(let ([,(? symbol? var) ,val-expr] ...)
         ,body ...)
@@ -74,6 +85,20 @@
                   (let-definition 'y (primitive-op '@* 2 (list (var-name 'x) (litteral 2))))
                   )
             (list (primitive-op '@- 2 (list (var-name 'x) (var-name 'y))))))
+
+  ;; Labels
+  (check-equal?
+   (parse '(labels ([f1 (code (x y) (z) (@* (@+ x y) z))])
+                   (f1 2 3)))
+   (labels-dec
+    (list
+     (label-definition 'f1 '(x y) '(z)
+                       (list (primitive-op '@* 2
+                                           (list (primitive-op '@+ 2
+                                                               (list (var-name 'x) (var-name 'y)))
+                                                 (var-name 'z))))))
+    (list
+     (application (var-name 'f1) (list (litteral 2) (litteral 3))))))
 
   ;; Conditionals
   (check-equal?
