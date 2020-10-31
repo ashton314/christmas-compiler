@@ -28,6 +28,10 @@
        lvar params free-vars f-body)
       (map parse body))]
 
+    ;; Closures
+    [`(closure ,label ,bindings)
+     (closure label (map parse bindings))]
+
     ;; let-blocks
     [`(let ([,(? symbol? var) ,val-expr] ...)
         ,body ...)
@@ -99,6 +103,11 @@
                                                  (var-name 'z))))))
     (list
      (application (var-name 'f1) (list (litteral 2) (litteral 3))))))
+
+  ;; Closures
+  (check-equal?
+   (parse '(closure f1 (1 (@+ x 2))))
+   (closure 'f1 (list (litteral 1) (primitive-op '@+ 2 (list (var-name 'x) (litteral 2))))))
 
   ;; Conditionals
   (check-equal?

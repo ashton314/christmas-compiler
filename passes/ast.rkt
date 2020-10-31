@@ -38,15 +38,16 @@
 
 ;; Labels definition
 (def-ast-node labels-dec (definitions body))
-
 (def-ast-node label-definition (name arguments free-vars body))
 
 ;; Lambda (used in the initial passes; eventually this should get hoisted)
 (def-ast-node lambda-dec (arguments free-vars body))
 
+;; Closure
+(def-ast-node closure (label bindings))
+
 ;; Let; we might compile these into lambdas later
 (def-ast-node let-dec (definitions body))
-
 (def-ast-node let-definition (var-name expr))
 
 ;; General application node; we'll refine through the passes
