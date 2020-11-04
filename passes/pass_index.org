@@ -5,5 +5,6 @@ This compiler consists of several small passes. Since there are so many, this is
 * Passes
 
  - [[file:parser.rkt][Parser]] :: The first pass is the parser: this turns an external, Racket-hosted s-expression into our internal AST
+ - [[file:code_gen.rkt][Code Generation]] :: Final pass is the code generation: this turns the final, processed AST into LLVM IR
 
 This list will grow as time goes on.
