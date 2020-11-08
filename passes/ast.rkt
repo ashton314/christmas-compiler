@@ -4,54 +4,58 @@
 
 (provide (all-defined-out))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Let's rethink how we want to build new nodes ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define-syntax def-ast-node
-  (syntax-rules ()
-    [(def-ast-node node-name (fields ...))
-     (struct node-name
-       (fields ... [type #:auto])
-       #:auto-value 'bottom
-       #:mutable #:transparent)]))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; With those defined, let's build up our AST node types ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; TODO: add line numbers to the ast-node data
+(struct ast-node ([type #:auto])
+  #:auto-value 'bottom
+  #:mutable #:transparent)
 
 ;; Literal values like 42, 2.345, etc.
-(def-ast-node litteral (value))
+(struct litteral ast-node (value)
+  #:mutable #:transparent)
 
 ;; Quoted values
-(def-ast-node quoted-atom (name))
-(def-ast-node quoted-list (lst))
+(struct quoted-atom ast-node (name)
+  #:mutable #:transparent)
+(struct quoted-list ast-node (lst)
+  #:mutable #:transparent)
 
 ;; Primitively-defined operations; math operators fall under this category
-(def-ast-node primitive-op (name arity arguments))
+(struct primitive-op ast-node (name arity arguments)
+  #:mutable #:transparent)
 
 ;; Names of variables
-(def-ast-node var-name (name))
+(struct var-name ast-node (name)
+  #:mutable #:transparent)
 
 ;; Explicit annotation of a type
-(def-ast-node type-annotation (expr))
+(struct type-annotation ast-node (expr)
+  #:mutable #:transparent)
 
 ;; Labels definition
-(def-ast-node labels-dec (definitions body))
-(def-ast-node label-definition (name arguments free-vars body))
+(struct labels-dec ast-node (definitions body)
+  #:mutable #:transparent)
+(struct label-definition ast-node (name arguments free-vars body)
+  #:mutable #:transparent)
 
 ;; Lambda (used in the initial passes; eventually this should get hoisted)
-(def-ast-node lambda-dec (arguments free-vars body))
+(struct lambda-dec ast-node (arguments free-vars body)
+  #:mutable #:transparent)
 
 ;; Closure
-(def-ast-node closure (label bindings))
+(struct closure ast-node (label bindings)
+  #:mutable #:transparent)
 
 ;; Let; we might compile these into lambdas later
-(def-ast-node let-dec (definitions body))
-(def-ast-node let-definition (var-name expr))
+(struct let-dec ast-node (definitions body)
+  #:mutable #:transparent)
+(struct let-definition ast-node (var-name expr)
+  #:mutable #:transparent)
 
 ;; General application node; we'll refine through the passes
-(def-ast-node application (func-ref args))
+(struct application ast-node (func-ref args)
+  #:mutable #:transparent)
 
 ;; Conditional node
-(def-ast-node if-dec (condition true-case false-case))
+(struct if-dec ast-node (condition true-case false-case)
+  #:mutable #:transparent)
+
