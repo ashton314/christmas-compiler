@@ -1,6 +1,7 @@
 #lang racket
 
 (require syntax/parse/define)
+(require racket/pretty)
 
 (provide (all-defined-out))
 
