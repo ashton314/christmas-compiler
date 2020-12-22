@@ -28,6 +28,10 @@
        lvar params free-vars f-body)
       (map parse body))]
 
+    ;; Function definitions: we can hoist these into a labels declaration
+    [`(def (,label ,params ...) ,body ...)
+     (func-def label params (map parse body))]
+
     ;; Closures
     [`(closure ,label ,bindings)
      (closure label (map parse bindings))]
@@ -103,6 +107,15 @@
                                                  (var-name 'z))))))
     (list
      (application (var-name 'f1) (list (litteral 2) (litteral 3))))))
+
+  ;; Function definitions
+  (check-equal?
+   (parse '(def (foo x) (@+ x (foo 1))))
+   (func-def 'foo '(x)
+             (list (primitive-op '@+ 2
+                           (list (var-name 'x)
+                                 (application (var-name 'foo)
+                                              (list (litteral 1))))))))
 
   ;; Closures
   (check-equal?

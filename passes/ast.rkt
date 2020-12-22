@@ -42,6 +42,10 @@
 (struct lambda-dec ast-node (arguments free-vars body)
   #:mutable #:transparent)
 
+;; Function definitions
+(struct func-def ast-node (label params body)
+  #:mutable #:transparent)
+
 ;; Closure
 (struct closure ast-node (label bindings)
   #:mutable #:transparent)
@@ -54,6 +58,11 @@
 
 ;; General application node; we'll refine through the passes
 (struct application ast-node (func-ref args)
+  #:mutable #:transparent)
+
+;; Call to a continuation: we distinguish from "regular" function
+;; calls because this is essentially just a JUMP command
+(struct kapp ast-node (k-ref arg)
   #:mutable #:transparent)
 
 ;; Conditional node
