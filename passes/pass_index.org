@@ -5,6 +5,15 @@ This compiler consists of several small passes. Since there are so many, this is
 * Passes
 
  - [[file:parser.rkt][Parser]] :: The first pass is the parser: this turns an external, Racket-hosted s-expression into our internal AST
- - [[file:code_gen.rkt][Code Generation]] :: Final pass is the code generation: this turns the final, processed AST into LLVM IR
+
+ - [[file:cps_conversion.rkt][CPS Conversion]] :: Converts the program into CPS-style
+
+ - (TODO) Free Variable Analysis :: Checks all lambda nodes and fills in free variables; generates closures from lambdas where needed
+
+ - (TODO) Function Hoisting :: Lifts all functions to top level; remembers references
+
+ - Code Generation :: Final pass is the code generation: this turns the final, processed AST into LLVM IR or C, depending on which one is active:
+   + [[file:code_gen-c.rkt][C Generator]] :: Generates C code
+   + [[file:code_gen-llvm.rkt][LLVM Generator]] :: Generates LLVM IR
 
 This list will grow as time goes on.
