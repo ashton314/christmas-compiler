@@ -93,6 +93,43 @@
 
      (conv-args '() args)]
 
+    ;; Primitive op with non-simple arguments
+    [(primitive-op _ op-name arity args)
+
+     (define (conv-args simple rst)
+       (if (null? rst)
+           (primitive-op op-name arity (append (reverse simple) (list k₀)))
+           (if (simple? (car rst))
+               (conv-args (cons (car rst) simple) (cdr rst))
+               ;; Ok, need to convert this argument
+               (ast->cps
+                (car rst)
+                (let ([k-fresh (gensym 'x₂)])
+                  (lambda-dec
+                   (list k-fresh)
+                   (ast->cps
+                    (primitive-op op-name arity
+                                 `(,@(reverse simple) ,k-fresh ,@rst))
+                    k₀)))))))
+
+     (conv-args '() args)]
+
+    ;; Conditional
+    [(if-dec _ c-expr t-case f-case)
+     #:when (simple? c-expr)
+     (if-dec c-expr (ast->cps t-case k₀) (ast->cps f-case k₀))]
+
+    [(if-dec _ c-expr t-case f-case)
+     #:when (not (simple? c-expr))
+     (ast->cps
+      c-expr
+      (let ([k-fresh (gensym 'x₃)])
+        (lambda-dec (list k-fresh)
+                    (if-dec k-fresh
+                            (ast->cps t-case k₀)
+                            (ast->cps f-case k₀)))))]
+
+
     [_ (error "Unable to match expression in CPS conversion" expr)]))
 
 [module+ test

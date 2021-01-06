@@ -54,10 +54,10 @@
 
     ;; Primitive operations
     [`(,(? prim-arity-0? op))
-     (primitive-op op 0 'void)]
+     (primitive-op op 0 '())]
 
     [`(,(? prim-arity-1? op) ,arg)
-     (primitive-op op 1 (parse arg))]
+     (primitive-op op 1 (list (parse arg)))]
 
     [`(,(? prim-arity-2? op) ,arg1 ,arg2)
      (primitive-op op 2 (list (parse arg1) (parse arg2)))]
@@ -125,7 +125,7 @@
   ;; Conditionals
   (check-equal?
    (parse '(if (@zero? x) (quote foo) (quote bar)))
-   (if-dec (primitive-op '@zero? 1 (var-name 'x)) (quoted-atom 'foo) (quoted-atom 'bar)))
+   (if-dec (primitive-op '@zero? 1 (list (var-name 'x))) (quoted-atom 'foo) (quoted-atom 'bar)))
 
   ;; Funciton calls
   (check-equal?
@@ -145,7 +145,9 @@
 
   ;; Primitive operations
   (check-equal? (parse '(@+ 1 (@add1 2)))
-                (primitive-op '@+ 2 (list (litteral 1) (primitive-op '@add1 1 (litteral 2)))))
+                (primitive-op '@+ 2 (list (litteral 1) (primitive-op '@add1 1 (list (litteral 2))))))
+  (check-equal? (parse '(@null? l))
+                (primitive-op '@null? 1 (list (var-name 'l))))
 
   ;; Literals and quotes
   (check-equal? (parse '(quote foo)) (quoted-atom 'foo))
