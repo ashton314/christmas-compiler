@@ -3,6 +3,7 @@
 (module+ test
   (require rackunit))
 
+(require racket/pretty)
 (require "ast.rkt")
 (require "parser.rkt")
 
@@ -69,7 +70,7 @@
                  (lambda-dec
                   (list k-fresh)
                   '()
-                  (ast->cps (application k-fresh args) k₀))))]
+                  (ast->cps (application (var-name k-fresh) args) k₀))))]
 
     ;; Application: function has been converted; now convert args
     [(application _ func-ref args)
@@ -86,9 +87,10 @@
                 (let ([k-fresh (gensym 'x₂)])
                   (lambda-dec
                    (list k-fresh)
+                   '()
                    (ast->cps
                     (application func-ref
-                                 `(,@(reverse simple) ,k-fresh ,@rst))
+                                 `(,@(reverse simple) ,(var-name k-fresh) ,@(cdr rst)))
                     k₀)))))))
 
      (conv-args '() args)]
@@ -101,15 +103,17 @@
            (primitive-op op-name arity (append (reverse simple) (list k₀)))
            (if (simple? (car rst))
                (conv-args (cons (car rst) simple) (cdr rst))
+
                ;; Ok, need to convert this argument
                (ast->cps
                 (car rst)
                 (let ([k-fresh (gensym 'x₂)])
                   (lambda-dec
                    (list k-fresh)
+                   '()
                    (ast->cps
                     (primitive-op op-name arity
-                                 `(,@(reverse simple) ,k-fresh ,@rst))
+                                  `(,@(reverse simple) ,(var-name k-fresh) ,@(cdr rst)))
                     k₀)))))))
 
      (conv-args '() args)]
@@ -125,12 +129,15 @@
       c-expr
       (let ([k-fresh (gensym 'x₃)])
         (lambda-dec (list k-fresh)
-                    (if-dec k-fresh
+                    '()
+                    (if-dec (var-name k-fresh)
                             (ast->cps t-case k₀)
                             (ast->cps f-case k₀)))))]
 
 
     [_ (error "Unable to match expression in CPS conversion" expr)]))
+
+(define expr-foo (parse '(lambda (map f l) (if (@null? l) '() (@cons (f (@car l)) (map f (@cdr l)))))))
 
 [module+ test
   ;; TODO
